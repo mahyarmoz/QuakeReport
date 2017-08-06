@@ -53,7 +53,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     public static final String SAMPLE_URL= "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-02&minfelt=500&minmagnitude=7";
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
-    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query";   //TODO: Figure out how to use http and follow through the redirection (Code will 301, not 200)
+    private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query";   //TODO: Figure out how to use http and follow through the redirection (Code will be 301, not 200)
 
     EarthquakeAdapter adaptor;
     ListView earthquakeListView;
@@ -92,12 +92,18 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String minMagnitude = sharedPrefs.getString(getString(R.string.settings_min_magnitude_key), getString(R.string.settings_min_magnitude_default));
 
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default));
+
+        String numberOfResults = sharedPrefs.getString(getString(R.string.settings_num_of_results_key), getString(R.string.settings_num_of_results_default));
+
         Uri baseUri = Uri.parse(USGS_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon()
                 .appendQueryParameter("format", "geojson")
-                .appendQueryParameter("limit", "10")
+                .appendQueryParameter("limit", numberOfResults)
                 .appendQueryParameter("minmag", minMagnitude)
-                .appendQueryParameter("orderby", "time");
+                .appendQueryParameter("orderby", orderBy);
 
         Log.e(LOG_TAG, "The url is " + uriBuilder);
 
